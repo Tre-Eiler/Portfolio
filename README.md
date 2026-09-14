@@ -64,6 +64,16 @@ to any single platform.
   - [Diff-based incremental polling](security-operations/threat-detection-incident-tracking/concepts/diff-based-incremental-polling.md)
   - [Bidirectional system linking](security-operations/threat-detection-incident-tracking/concepts/bidirectional-system-linking.md)
 
+## AI-enabled service delivery
+
+- [Conversational Self-Service Automation](ai-enabled-service-delivery/conversational-self-service-automation) —
+  lets people request common IT changes in plain language through a
+  conversational AI ticket-intake assistant, and have a deterministic,
+  auditable automation actually carry them out.
+  - [Structured intent extraction](ai-enabled-service-delivery/conversational-self-service-automation/concepts/structured-intent-extraction.md)
+  - [Constrained auto-processing](ai-enabled-service-delivery/conversational-self-service-automation/concepts/constrained-auto-processing.md)
+  - [Progressive status narration](ai-enabled-service-delivery/conversational-self-service-automation/concepts/progressive-status-narration.md)
+
 ## Service delivery operations
 
 - [NOC Ticket Routing](service-delivery-operations/noc-ticket-routing) — a
