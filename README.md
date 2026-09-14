@@ -30,3 +30,9 @@ underlying systems.
   workforce management system's employee roster.
   - [HR-driven identity sync](rewst-automations/workforce-directory-sync/concepts/hr-driven-identity-sync.md)
   - [Ticketed batch run](rewst-automations/workforce-directory-sync/concepts/ticketed-batch-run.md)
+- [Real-Time Incident Alerting](rewst-automations/real-time-incident-alerting) —
+  a recurring automation that turns a monitoring alert into multi-channel
+  notifications and automatically sends the all-clear once it resolves.
+  - [Multi-channel fan-out](rewst-automations/real-time-incident-alerting/concepts/multi-channel-fan-out.md)
+  - [Channel-specific quiet hours](rewst-automations/real-time-incident-alerting/concepts/channel-specific-quiet-hours.md)
+  - [Self-resolving alert loop](rewst-automations/real-time-incident-alerting/concepts/self-resolving-alert-loop.md)
