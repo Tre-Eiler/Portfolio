@@ -92,6 +92,15 @@ to any single platform.
 - [Platform Health Heartbeat](monitoring-and-alerting/platform-health-heartbeat) —
   a synthetic uptime check that verifies the automation platform's own
   trigger pipeline is alive, not just that a server is running.
+- [Cross-Platform Synthetic Monitoring](monitoring-and-alerting/cross-platform-synthetic-monitoring) —
+  a portfolio of synthetic checks, one per platform in the toolchain,
+  that continuously exercises every system the business's service
+  delivery depends on from the outside.
+  - [One check per platform](monitoring-and-alerting/cross-platform-synthetic-monitoring/concepts/one-check-per-platform.md)
+  - [Realistic multi-step checks](monitoring-and-alerting/cross-platform-synthetic-monitoring/concepts/realistic-multi-step-checks.md)
+  - [Multiple vantage points per check](monitoring-and-alerting/cross-platform-synthetic-monitoring/concepts/multi-vantage-point-checks.md)
+  - [Parallel monitoring during migration](monitoring-and-alerting/cross-platform-synthetic-monitoring/concepts/parallel-monitoring-during-migration.md)
+  - [Expected-failure assertions](monitoring-and-alerting/cross-platform-synthetic-monitoring/concepts/expected-failure-assertions.md)
 
 ## Endpoint provisioning
 
