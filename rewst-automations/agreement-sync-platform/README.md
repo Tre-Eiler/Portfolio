@@ -20,7 +20,11 @@ since some companies are still invoiced manually.
 
 - **Per-vendor sync/audit workflows** (one per integration, per MSP) —
   compare vendor-side company/seat counts against PSA agreement mappings and
-  write the result to a per-MSP org variable.
+  write the result to a per-MSP org variable. Three are documented so far:
+  [SentinelOne](./vendor-syncs/sentinelone-sync.md),
+  [Duo](./vendor-syncs/duo-sync.md), and
+  [M365 users](./vendor-syncs/m365-user-sync.md) — each also handles its own
+  setup wizard and PSA ticket/time logging, not just the sync itself.
 - **Aggregation + render + publish workflow** — collects every MSP's audit
   blob, renders one HTML report, and publishes it both as a live App
   Builder page and a weekly email digest. See
