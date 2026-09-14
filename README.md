@@ -89,3 +89,14 @@ to any single platform.
   - [Multi-channel fan-out](monitoring-and-alerting/real-time-incident-alerting/concepts/multi-channel-fan-out.md)
   - [Channel-specific quiet hours](monitoring-and-alerting/real-time-incident-alerting/concepts/channel-specific-quiet-hours.md)
   - [Self-resolving alert loop](monitoring-and-alerting/real-time-incident-alerting/concepts/self-resolving-alert-loop.md)
+- [Platform Health Heartbeat](monitoring-and-alerting/platform-health-heartbeat) —
+  a synthetic uptime check that verifies the automation platform's own
+  trigger pipeline is alive, not just that a server is running.
+
+## Endpoint provisioning
+
+- [Tenant Agent Auto-Provisioning](endpoint-provisioning/tenant-agent-auto-provisioning) —
+  keeps every managed tenant's endpoint agent deployment policy current
+  automatically, including the install credential embedded in it.
+  - [Freshly minted install credentials](endpoint-provisioning/tenant-agent-auto-provisioning/concepts/freshly-minted-install-credentials.md)
+  - [Idempotent deployment upsert](endpoint-provisioning/tenant-agent-auto-provisioning/concepts/idempotent-deployment-upsert.md)
