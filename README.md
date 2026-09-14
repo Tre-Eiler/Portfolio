@@ -25,3 +25,8 @@ underlying systems.
   - [Config-driven, multi-org setup](rewst-automations/noc-ticket-routing/concepts/config-driven-multi-org-setup.md)
   - [Keyword-based priority routing](rewst-automations/noc-ticket-routing/concepts/keyword-priority-routing.md)
   - [Human-activity detection](rewst-automations/noc-ticket-routing/concepts/human-activity-detection.md)
+- [Workforce-to-Directory Identity Sync](rewst-automations/workforce-directory-sync) —
+  a recurring job that keeps directory user attributes in sync with a
+  workforce management system's employee roster.
+  - [HR-driven identity sync](rewst-automations/workforce-directory-sync/concepts/hr-driven-identity-sync.md)
+  - [Ticketed batch run](rewst-automations/workforce-directory-sync/concepts/ticketed-batch-run.md)
