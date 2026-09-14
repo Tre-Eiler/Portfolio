@@ -39,6 +39,16 @@ implementation detail, not the organizing principle.
   - [HR-driven identity sync](identity-management/workforce-directory-sync/concepts/hr-driven-identity-sync.md)
   - [Ticketed batch run](identity-management/workforce-directory-sync/concepts/ticketed-batch-run.md)
 
+## Security & access control
+
+- [AI-Assisted Admin Actions](security-and-access-control/ai-assisted-admin-actions) —
+  lets a conversational AI ticket-intake assistant carry out privileged
+  platform actions while a zero-trust identity check, re-verified at
+  execution time, decides what's actually allowed to happen.
+  - [Reusable identity verification](security-and-access-control/ai-assisted-admin-actions/concepts/reusable-identity-verification.md)
+  - [Privilege-gated execution](security-and-access-control/ai-assisted-admin-actions/concepts/privilege-gated-execution.md)
+  - [Ambiguity is a stop condition](security-and-access-control/ai-assisted-admin-actions/concepts/ambiguity-is-a-stop-condition.md)
+
 ## Service delivery operations
 
 - [NOC Ticket Routing](service-delivery-operations/noc-ticket-routing) — a
