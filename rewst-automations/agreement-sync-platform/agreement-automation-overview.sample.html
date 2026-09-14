@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agreement Automation Overview</title>
+  <style>
+    body { margin: 0; padding: 0; background: transparent; }
+
+    .rewst-wrap {
+      font-family: Arial, sans-serif;
+      padding: 24px;
+      max-width: 100%;
+      --c-rmm:        #a8724a;
+      --c-sentinel:   #55609e;
+      --c-duo:        #85608f;
+      --c-bsn:        #3c757c;
+      --c-axcient:    #4a7c50;
+      --c-m365:       #3f6f96;
+      --c-lastpass:   #9e5a55;
+      --c-other:      #6a4a8f;
+      --c-sync:       #2a7a3b;
+      --c-sync-text:  #6fae7c;
+      --c-gap:        #a67c33;
+      --c-gap-text:   #c39a4d;
+      --c-not-installed: #2e3140;
+      --c-unknown:    #8a92a6;
+      --danger:       #a33f3f;
+      --danger-text:  #e08a8a;
+      --panel-bg:     #1e2340;
+      --hairline:     rgba(255,255,255,0.08);
+    }
+    .rewst-wrap, .rewst-wrap *, .rewst-wrap *::before, .rewst-wrap *::after { box-sizing: border-box; }
+
+    /* Title bar */
+    .rewst-topbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 14px; margin-bottom: 26px; border-bottom: 1px solid rgba(255,255,255,0.10); }
+    .topbar-brand { display: inline-flex; align-items: center; flex-shrink: 0; text-decoration: none; }
+    .topbar-brand img { display: block; height: 28px; width: auto; max-width: 200px; }
+    .topbar-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+    .tb-btn { display: inline-flex; align-items: center; justify-content: center; height: 36px; min-width: 170px; padding: 0 16px; border-radius: 6px; border: 1px solid transparent; font-family: inherit; font-size: 12px; font-weight: 700; line-height: 1; text-decoration: none; white-space: nowrap; }
+    .tb-btn-home { color: #aab4c8; border-color: rgba(255,255,255,0.18); }
+    .tb-btn-home:hover { color: #fff; border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.06); }
+
+    /* Header */
+    .rewst-header { margin-bottom: 28px; text-align: center; }
+    .rewst-header h1 { margin: 0 0 10px 0; font-size: 32px; font-weight: 700; color: #fff; }
+    .rewst-header p { margin: 0; font-size: 13px; color: #aab4c8; line-height: 1.6; }
+    .report-meta { margin-top: 8px; font-size: 11px; color: #79839a; }
+
+    /* Sections */
+    .rewst-section { margin-bottom: 24px; }
+    .rewst-section-toggle { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.10); cursor: pointer; padding: 0 0 10px 0; color: #aab4c8; text-align: left; font-family: inherit; }
+    .rewst-section-toggle:hover { color: #fff; }
+    .rewst-section-toggle .sec-arrow { font-size: 10px; transition: transform 0.2s; }
+    .rewst-section-toggle.collapsed .sec-arrow { transform: rotate(-90deg); }
+    .rewst-section-toggle .sec-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .rewst-section-toggle .sec-hint { font-size: 12px; font-weight: 400; color: #79839a; text-transform: none; letter-spacing: 0; }
+    .rewst-panel-body { padding-top: 12px; }
+    .rewst-panel-body.hidden { display: none; }
+    .rewst-panel { background: var(--panel-bg); border: 1px solid var(--hairline); border-radius: 8px; padding: 20px 22px; max-width: 100%; }
+    .rewst-panel-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .rewst-panel-head h3 { margin: 0; font-size: 14px; font-weight: 700; color: #fff; }
+    .rewst-panel-head p { margin: 0; font-size: 12px; color: #79839a; line-height: 1.5; flex: 1 1 240px; min-width: 0; }
+
+    /* Stat cards */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; max-width: 100%; }
+    .stat-item { min-width: 0; background: rgba(255,255,255,0.04); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px 14px; }
+    .stat-name { font-size: 10px; font-weight: 700; color: #aab4c8; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.4; margin-bottom: 6px; }
+    .stat-num { font-size: 30px; font-weight: 700; color: #fff; line-height: 1.05; letter-spacing: -0.02em; }
+    .stat-num .stat-unit { font-size: 15px; font-weight: 600; color: #79839a; margin-left: 2px; }
+    .stat-num.gap { color: var(--c-gap-text); }
+    .stat-num.ok { color: var(--c-sync-text); }
+    .stat-num.muted { color: #5f6880; }
+    .stat-sub { margin-top: 5px; font-size: 11px; color: #79839a; line-height: 1.4; }
+
+    /* Scope control */
+    .filter-scope-row { display: flex; align-items: center; gap: 12px 14px; flex-wrap: wrap; margin-bottom: 4px; }
+    .scope-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #79839a; }
+    .seg { display: inline-flex; flex-wrap: wrap; gap: 3px; padding: 3px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; }
+    .seg-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: none; border-radius: 999px; background: transparent; color: #aab4c8; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .seg-btn:hover { color: #fff; }
+    .seg-btn .seg-count { font-size: 11px; font-weight: 400; color: #79839a; }
+    .seg-btn[aria-checked="true"] { color: #fff; }
+    .seg-btn[aria-checked="true"] .seg-count { color: rgba(255,255,255,0.8); }
+    .seg-btn[aria-checked="true"][data-scope="all"] { background: rgba(255,255,255,0.14); }
+    .seg-btn[aria-checked="true"][data-scope="installed"] { background: rgba(255,255,255,0.14); }
+    .seg-btn[aria-checked="true"][data-scope="gaps"] { background: var(--c-gap); }
+    .seg-btn[aria-checked="true"][data-scope="notinstalled"] { background: rgba(255,255,255,0.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35); }
+    .scope-note { font-size: 11px; color: #79839a; flex: 1 1 200px; min-width: 0; }
+
+    .state-defs { display: grid; gap: 12px; margin: 18px 0 0; padding: 18px 0; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+    .state-def { display: grid; grid-template-columns: minmax(120px, 168px) minmax(0, 1fr); gap: 14px; align-items: baseline; font-size: 11px; color: #aab4c8; line-height: 1.6; }
+    .state-def span:last-child { min-width: 0; }
+    .state-def em { color: #79839a; font-style: normal; }
+    .state-key { width: 100%; min-width: 0; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; text-align: center; }
+    .state-key.ok { background: rgba(42,122,59,0.25); color: var(--c-sync-text); }
+    .state-key.leak { background: rgba(163,63,63,0.28); color: var(--danger-text); }
+    .state-key.unmapped { background: rgba(166,124,51,0.22); color: var(--c-gap-text); }
+    .state-key.untracked { background: rgba(255,255,255,0.04); color: var(--c-unknown); border: 1px dashed rgba(255,255,255,0.30); }
+    .state-key.na { background: rgba(255,255,255,0.04); color: #6b7387; }
+
+    .export-row { display: flex; align-items: center; gap: 14px 18px; flex-wrap: wrap; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--hairline); }
+    .export-note { flex: 1 1 260px; min-width: 0; font-size: 11px; color: #79839a; line-height: 1.5; }
+    .export-actions { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+    .btn-export { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 16px; border-radius: 6px; background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.18); color: #fff; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .btn-export:hover { background: rgba(255,255,255,0.18); }
+    .panel-link { background: none; border: none; padding: 0; font-family: inherit; font-size: 12px; font-weight: 600; color: #8fa3cc; cursor: pointer; white-space: nowrap; }
+    .panel-link:hover { color: #fff; text-decoration: underline; }
+    .table-note { margin-top: 10px; font-size: 11px; color: #79839a; line-height: 1.5; }
+    .rewst-legend { display: flex; align-items: center; gap: 10px 20px; flex-wrap: wrap; margin-top: 18px; font-size: 11px; color: #79839a; line-height: 1.5; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .legend-ok { background: var(--c-sync); }
+    .legend-gap { background: transparent; box-shadow: inset 0 0 0 1px var(--c-gap); }
+    .legend-ni { background: rgba(255,255,255,0.04); border: 1px dashed rgba(255,255,255,0.35); }
+
+    /* Geo cards */
+    .msp-card { background: var(--panel-bg); border: 1px solid var(--hairline); border-radius: 8px; padding: 18px 20px; margin-bottom: 16px; max-width: 100%; }
+    .msp-head { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid var(--hairline); }
+    .msp-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .msp-rank { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 5px; background: rgba(255,255,255,0.08); color: #aab4c8; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .msp-name { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.2; }
+    .msp-meta { margin-left: auto; text-align: right; font-size: 11px; color: #79839a; line-height: 1.6; }
+    .msp-meta .org-id { font-family: Consolas, Menlo, monospace; font-size: 10px; color: #5f6880; }
+    .msp-stats { margin-bottom: 16px; }
+
+    /* Table */
+    .int-table-wrap { max-width: 100%; overflow-x: auto; border: 1px solid var(--hairline); border-radius: 6px; }
+    .int-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .int-table th { background: #1a1a2e; color: #aab4c8; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 9px 12px; white-space: nowrap; }
+    .int-table td { padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.07); vertical-align: middle; color: #c9d1e0; }
+    .int-table tbody tr:hover { background: rgb(35, 57, 100); }
+    .int-table tr.hidden { display: none; }
+    .int-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .int-table th.num { text-align: right; }
+
+    .prod { display: flex; align-items: center; gap: 8px; white-space: nowrap; font-weight: 600; color: #fff; }
+    .prod-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--chip); flex-shrink: 0; }
+    tr[data-installed="false"] .prod { color: #79839a; font-weight: 400; }
+    tr[data-installed="false"] .prod-dot { opacity: 0.35; }
+    tr[data-installed="false"] td { color: #5f6880; }
+
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .badge-ok { background: rgba(42,122,59,0.25); color: var(--c-sync-text); }
+    .badge-ni { background: rgba(255,255,255,0.04); color: var(--c-unknown); border: 1px dashed rgba(255,255,255,0.30); }
+    .badge-failed { background: rgba(163,63,63,0.28); color: var(--danger-text); }
+
+    .unit { color: #79839a; }
+    .gap-num { color: var(--c-gap-text); font-weight: 700; }
+    .zero-num { color: #5f6880; }
+    .cov-num { font-weight: 700; color: #fff; }
+    .cov-num.low { color: var(--c-gap-text); }
+    .dash { color: #4a5164; }
+
+    .empty-row td { text-align: center; color: #79839a; font-size: 12px; padding: 20px 12px; }
+    .empty-row:hover { background: none; }
+    .page-empty { background: var(--panel-bg); border: 1px solid var(--hairline); border-radius: 8px; padding: 40px 22px; text-align: center; color: #79839a; font-size: 13px; line-height: 1.6; }
+    .page-empty strong { display: block; color: #fff; font-size: 15px; margin-bottom: 6px; }
+
+    .rewst-wrap a:focus-visible, .rewst-wrap button:focus-visible { outline: 2px solid #7aa2ff; outline-offset: 2px; }
+  </style>
+</head>
+<body><script>
+window.REPORT_DATA = [{"json": {"generated_at": "2026-09-14T16:06:54Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000001", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 47, "unmapped_seats": 1574}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 33, "unmapped_seats": 129}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 47, "status": "ok", "unit": "endpoints", "unmapped_companies": 8, "unmapped_seats": 149}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 65, "unmapped_seats": 1427}}, "totals": {"integrations_failed": 0, "integrations_skipped": 2, "total_gaps": 153, "unmapped_companies": 153, "unmapped_seats": 3279}}, "org_id": "00000000-0000-0000-0000-000000000001", "org_name": "MSP-01"}, {"json": {"generated_at": "2026-09-14T16:11:45Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": true}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000002", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 43, "unmapped_seats": 1714}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 36, "unmapped_seats": 129}, "breach_secure_now": {"mapped_companies": 0, "status": "ok", "unit": "users", "unmapped_companies": 11, "unmapped_seats": 238}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 2, "unmapped_seats": 327}, "rmm": {"mapped_companies": 55, "status": "ok", "unit": "endpoints", "unmapped_companies": 7, "unmapped_seats": 262}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 1, "total_gaps": 100, "unmapped_companies": 100, "unmapped_seats": 2670}}, "org_id": "00000000-0000-0000-0000-000000000002", "org_name": "MSP-02"}, {"json": {"generated_at": "2026-09-11T20:12:39Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000003", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 177, "unmapped_seats": 6990}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 78, "unmapped_seats": 219}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 34, "status": "ok", "unit": "endpoints", "unmapped_companies": 228, "unmapped_seats": 4545}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 203, "unmapped_seats": 6132}}, "totals": {"integrations_failed": 0, "integrations_skipped": 2, "total_gaps": 687, "unmapped_companies": 687, "unmapped_seats": 17886}}, "org_id": "00000000-0000-0000-0000-000000000003", "org_name": "MSP-03"}, {"json": {"generated_at": "2026-09-14T16:10:38Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000004", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 0, "status": "ok", "unit": "endpoints", "unmapped_companies": 63, "unmapped_seats": 715}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 4, "total_gaps": 63, "unmapped_companies": 63, "unmapped_seats": 715}}, "org_id": "00000000-0000-0000-0000-000000000004", "org_name": "MSP-04"}, {"json": {"generated_at": "2026-09-14T16:03:27Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000005", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 0, "status": "ok", "unit": "endpoints", "unmapped_companies": 0, "unmapped_seats": 0}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 4, "total_gaps": 0, "unmapped_companies": 0, "unmapped_seats": 0}}, "org_id": "00000000-0000-0000-0000-000000000005", "org_name": "MSP-05"}, {"json": {"generated_at": "2026-09-14T16:02:00Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000006", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 0, "status": "ok", "unit": "endpoints", "unmapped_companies": 65, "unmapped_seats": 1761}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 4, "total_gaps": 65, "unmapped_companies": 65, "unmapped_seats": 1761}}, "org_id": "00000000-0000-0000-0000-000000000006", "org_name": "MSP-06"}, {"json": {"generated_at": "2026-09-14T16:05:36Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000007", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 0, "status": "ok", "unit": "endpoints", "unmapped_companies": 161, "unmapped_seats": 3113}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 4, "total_gaps": 161, "unmapped_companies": 161, "unmapped_seats": 3113}}, "org_id": "00000000-0000-0000-0000-000000000007", "org_name": "MSP-07"}, {"json": {"generated_at": "2026-09-14T16:10:46Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000008", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 45, "unmapped_seats": 609}, "rmm": {"mapped_companies": 0, "status": "ok", "unit": "endpoints", "unmapped_companies": 78, "unmapped_seats": 3682}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 614, "unmapped_seats": 225}}, "totals": {"integrations_failed": 0, "integrations_skipped": 2, "total_gaps": 737, "unmapped_companies": 737, "unmapped_seats": 4516}}, "org_id": "00000000-0000-0000-0000-000000000008", "org_name": "MSP-08"}, {"json": {"generated_at": "2026-09-14T16:12:19Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000009", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 0, "status": "ok", "unit": "endpoints", "unmapped_companies": 68, "unmapped_seats": 2052}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 4, "total_gaps": 68, "unmapped_companies": 68, "unmapped_seats": 2052}}, "org_id": "00000000-0000-0000-0000-000000000009", "org_name": "MSP-09"}, {"json": {"generated_at": "2026-09-14T16:11:06Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": true}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000010", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 130, "unmapped_seats": 6865}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 50, "unmapped_seats": 124}, "breach_secure_now": {"mapped_companies": 0, "status": "ok", "unit": "users", "unmapped_companies": 5, "unmapped_seats": 100}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 4, "unmapped_seats": 154}, "rmm": {"mapped_companies": 150, "status": "ok", "unit": "endpoints", "unmapped_companies": 12, "unmapped_seats": 237}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 76, "unmapped_seats": 2016}}, "totals": {"integrations_failed": 0, "integrations_skipped": 0, "total_gaps": 287, "unmapped_companies": 287, "unmapped_seats": 9496}}, "org_id": "00000000-0000-0000-0000-000000000010", "org_name": "MSP-10"}, {"json": {"generated_at": "2026-09-14T16:04:25Z", "integrations": {"axcient": {"failed": false, "installed": false}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000011", "org_name": null, "products": {"axcient_cloud": {"status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "skipped", "unit": "protected_devices", "unmapped_companies": 0, "unmapped_seats": 0}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 102, "status": "ok", "unit": "endpoints", "unmapped_companies": 138, "unmapped_seats": 4718}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 4, "total_gaps": 138, "unmapped_companies": 138, "unmapped_seats": 4718}}, "org_id": "00000000-0000-0000-0000-000000000011", "org_name": "MSP-11"}, {"json": {"generated_at": "2026-09-14T16:14:34Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": true}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000012", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 2, "unmapped_seats": 102}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 1, "unmapped_seats": 3}, "breach_secure_now": {"mapped_companies": 0, "status": "ok", "unit": "users", "unmapped_companies": 33, "unmapped_seats": 4209}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 7, "unmapped_seats": 0}, "rmm": {"mapped_companies": 115, "status": "ok", "unit": "endpoints", "unmapped_companies": 1, "unmapped_seats": 1}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 131, "unmapped_seats": 5156}}, "totals": {"integrations_failed": 0, "integrations_skipped": 0, "total_gaps": 175, "unmapped_companies": 175, "unmapped_seats": 9471}}, "org_id": "00000000-0000-0000-0000-000000000012", "org_name": "MSP-12"}, {"json": {"generated_at": "2026-09-14T16:11:48Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": true}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000013", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 11, "unmapped_seats": 1034}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 107, "unmapped_seats": 438}, "breach_secure_now": {"mapped_companies": 0, "status": "ok", "unit": "users", "unmapped_companies": 16, "unmapped_seats": 1602}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 2, "unmapped_seats": 69}, "rmm": {"mapped_companies": 175, "status": "ok", "unit": "endpoints", "unmapped_companies": 10, "unmapped_seats": 948}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 181, "unmapped_seats": 4991}}, "totals": {"integrations_failed": 0, "integrations_skipped": 0, "total_gaps": 327, "unmapped_companies": 327, "unmapped_seats": 9082}}, "org_id": "00000000-0000-0000-0000-000000000013", "org_name": "MSP-13"}, {"json": {"generated_at": "2026-09-14T16:09:31Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": true}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": false}}, "org_id": "00000000-0000-0000-0000-000000000014", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 10, "unmapped_seats": 378}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 22, "unmapped_seats": 110}, "breach_secure_now": {"mapped_companies": 0, "status": "ok", "unit": "users", "unmapped_companies": 5, "unmapped_seats": 122}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 9, "unmapped_seats": 92}, "rmm": {"mapped_companies": 117, "status": "ok", "unit": "endpoints", "unmapped_companies": 24, "unmapped_seats": 379}, "sentinelone": {"mapped_companies": 0, "status": "skipped", "unit": "active_licenses", "unmapped_companies": 0, "unmapped_seats": 0}}, "totals": {"integrations_failed": 0, "integrations_skipped": 1, "total_gaps": 73, "unmapped_companies": 73, "unmapped_seats": 1081}}, "org_id": "00000000-0000-0000-0000-000000000014", "org_name": "MSP-14"}, {"json": {"generated_at": "2026-09-11T20:13:22Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": true}, "duo": {"failed": false, "installed": false}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000015", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 3, "unmapped_seats": 3}, "breach_secure_now": {"mapped_companies": 0, "status": "ok", "unit": "users", "unmapped_companies": 5, "unmapped_seats": 147}, "duo": {"mapped_companies": 0, "status": "skipped", "unit": "devices", "unmapped_companies": 0, "unmapped_seats": 0}, "rmm": {"mapped_companies": 72, "status": "ok", "unit": "endpoints", "unmapped_companies": 3, "unmapped_seats": 257}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 203, "unmapped_seats": 6132}}, "totals": {"integrations_failed": 0, "integrations_skipped": 1, "total_gaps": 216, "unmapped_companies": 216, "unmapped_seats": 6539}}, "org_id": "00000000-0000-0000-0000-000000000015", "org_name": "MSP-15"}, {"json": {"generated_at": "2026-09-14T16:12:54Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000016", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 17, "unmapped_seats": 1013}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 2, "unmapped_seats": 3}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 2, "unmapped_seats": 2}, "rmm": {"mapped_companies": 56, "status": "ok", "unit": "endpoints", "unmapped_companies": 4, "unmapped_seats": 24}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 78, "unmapped_seats": 1738}}, "totals": {"integrations_failed": 0, "integrations_skipped": 1, "total_gaps": 108, "unmapped_companies": 108, "unmapped_seats": 2780}}, "org_id": "00000000-0000-0000-0000-000000000016", "org_name": "MSP-16"}, {"json": {"generated_at": "2026-09-14T16:06:45Z", "integrations": {"axcient": {"failed": false, "installed": true}, "breach_secure_now": {"failed": false, "installed": false}, "duo": {"failed": false, "installed": true}, "rmm": {"failed": false, "installed": true}, "sentinelone": {"failed": false, "installed": true}}, "org_id": "00000000-0000-0000-0000-000000000017", "org_name": null, "products": {"axcient_cloud": {"status": "ok", "unit": "users", "unmapped_companies": 59, "unmapped_seats": 1341}, "axcient_recover": {"status": "ok", "unit": "protected_devices", "unmapped_companies": 57, "unmapped_seats": 213}, "breach_secure_now": {"mapped_companies": 0, "status": "skipped", "unit": "users", "unmapped_companies": 0, "unmapped_seats": 0}, "duo": {"mapped_companies": 0, "status": "ok", "unit": "devices", "unmapped_companies": 1, "unmapped_seats": 28}, "rmm": {"mapped_companies": 69, "status": "ok", "unit": "endpoints", "unmapped_companies": 6, "unmapped_seats": 42}, "sentinelone": {"mapped_companies": 0, "status": "ok", "unit": "active_licenses", "unmapped_companies": 15, "unmapped_seats": 10}}, "totals": {"integrations_failed": 0, "integrations_skipped": 1, "total_gaps": 139, "unmapped_companies": 139, "unmapped_seats": 1634}}, "org_id": "00000000-0000-0000-0000-000000000017", "org_name": "MSP-17"}];
+window.REPORT_GENERATED = "";
+</script>
+
+<div class="rewst-wrap" id="rewst-wrap">
+
+  <div class="rewst-topbar">
+    <a class="topbar-brand" href="#" title="Courser &mdash; return to home">
+      <span style="font-weight:700;font-size:16px;color:#fff;">Courser</span>
+    </a>
+    <nav class="topbar-nav" aria-label="Page actions">
+      <a class="tb-btn tb-btn-home" href="#">Home</a>
+    </nav>
+  </div>
+
+  <div class="rewst-header">
+    <h1>Agreement Automation Overview</h1>
+    <p>Companies present in a vendor platform but not mapped to an auto-reconciled PSA agreement addition. <strong>Unmapped does not mean unbilled</strong> &mdash; many are invoiced manually. Read these as items to verify, not confirmed leakage. Products with no integration are shown too. That is a visibility gap, not a to-do: the MSP may not sell the product at all, so the reconciliation gap there could be zero &mdash; we simply cannot tell. MSPs are ordered by unmapped seats, largest first.</p>
+    <div class="report-meta" id="report-meta"></div>
+  </div>
+
+  <!-- ============ PORTFOLIO SUMMARY ============ -->
+  <div class="rewst-section">
+    <button class="rewst-section-toggle" onclick="togglePanel(this)" aria-expanded="true" aria-controls="summary-body">
+      <span class="sec-arrow">&#9660;</span>
+      <span class="sec-label">Portfolio Summary</span>
+      <span class="sec-hint">&mdash; totals across all reporting MSPs</span>
+    </button>
+    <div class="rewst-panel-body" id="summary-body">
+      <div class="rewst-panel">
+        <div class="rewst-panel-head">
+          <h3>Across all MSPs</h3>
+          <p>Rolled up from the per-MSP cards below.</p>
+        </div>
+        <div class="stat-grid" id="portfolio-stats"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIEW CONTROL ============ -->
+  <div class="rewst-section">
+    <button class="rewst-section-toggle" onclick="togglePanel(this)" aria-expanded="true" aria-controls="view-body">
+      <span class="sec-arrow">&#9660;</span>
+      <span class="sec-label">View</span>
+      <span class="sec-hint">&mdash; choose which integration rows to show</span>
+    </button>
+    <div class="rewst-panel-body" id="view-body">
+      <div class="rewst-panel">
+        <div class="filter-scope-row">
+          <span class="scope-label">Integrations</span>
+          <div class="seg" id="scope" role="radiogroup" aria-label="Integration rows" onkeydown="scopeKeys(event)">
+            <button class="seg-btn" type="button" role="radio" aria-checked="false" data-scope="all" onclick="setScope(this)">All<span class="seg-count">0</span></button>
+            <button class="seg-btn" type="button" role="radio" aria-checked="true"  data-scope="installed" onclick="setScope(this)">Installed<span class="seg-count">0</span></button>
+            <button class="seg-btn" type="button" role="radio" aria-checked="false" data-scope="gaps" onclick="setScope(this)">Unmapped<span class="seg-count">0</span></button>
+            <button class="seg-btn" type="button" role="radio" aria-checked="false" data-scope="notinstalled" onclick="setScope(this)">Not installed<span class="seg-count">0</span></button>
+          </div>
+          <span class="scope-note" id="scope-note"></span>
+        </div>
+
+        <div class="state-defs">
+          <div class="state-def"><span class="state-key ok">Mapped &amp; billing</span><span>Company is on an auto-reconciled addition and the addition is invoicing. Nothing to do.</span></div>
+          <div class="state-def"><span class="state-key leak">Mapped, not billing</span><span>Company is mapped but the addition is not invoicing &mdash; inactive, zero quantity, or flagged non-billable. This is the highest-confidence revenue leak. <em>Reported only if the feed supplies it.</em></span></div>
+          <div class="state-def"><span class="state-key unmapped">Unmapped</span><span>Outside automated reconciliation. May still be billed manually. Needs verification before it counts as a gap.</span></div>
+          <div class="state-def"><span class="state-key untracked">Not installed</span><span>No integration, so no data. The gap could be anything from zero upward &mdash; this is a blind spot, not automatically something to fix.</span></div>
+          <div class="state-def"><span class="state-key na">Not applicable</span><span>MSP does not sell the product, so there is nothing to reconcile. <em>Not yet reported &mdash; today this is indistinguishable from a blind spot.</em></span></div>
+        </div>
+
+        <div class="rewst-legend">
+          <span class="legend-item"><span class="legend-dot legend-ok"></span>OK = integration synced this run</span>
+          <span class="legend-item"><span class="legend-dot legend-gap"></span>Amber = unmapped companies or seats to reconcile</span>
+          <span class="legend-item"><span class="legend-dot legend-ni"></span>Dashed outline = not installed &mdash; gap size unknown, possibly zero</span>
+        </div>
+
+        <div class="export-row">
+          <span class="export-note">The CSV mirrors what you are looking at &mdash; <span id="export-count">0</span> rows in the current view. Numbers export unformatted (no commas, no % sign) so Excel reads them as numbers.</span>
+          <span class="export-actions">
+            <button class="btn-export" type="button" onclick="downloadCsv(false)">Download CSV</button>
+            <button class="panel-link" type="button" id="export-all-btn" onclick="downloadCsv(true)">All rows</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GEO CARDS (rendered from data) ============ -->
+  <div id="msp-cards"></div>
+
+</div>
+
+<script>
+/* =========================================================================
+   1. PRIMITIVES
+   ========================================================================= */
+function pick(obj, names, fallback) {
+  for (var i = 0; i < names.length; i++) {
+    if (obj && obj[names[i]] !== undefined && obj[names[i]] !== null) { return obj[names[i]]; }
+  }
+  return fallback;
+}
+
+function firstText(values) {
+  for (var i = 0; i < values.length; i++) {
+    var v = values[i];
+    if (v !== null && v !== undefined && String(v).trim() !== '') { return String(v).trim(); }
+  }
+  return '';
+}
+
+function toNumber(v) {
+  if (v === null || v === undefined || v === '') { return null; }
+  var n = Number(String(v).replace(/,/g, ''));
+  return isNaN(n) ? null : n;
+}
+
+function toBool(v) {
+  if (typeof v === 'boolean') { return v; }
+  if (v === null || v === undefined) { return false; }
+  return /^(true|yes|y|1|installed|enabled)$/i.test(String(v).trim());
+}
+
+function isObject(v) { return v !== null && typeof v === 'object' && !Array.isArray(v); }
+
+function maybeParse(v) {
+  if (typeof v !== 'string') { return v; }
+  var s = v.trim();
+  if (s.charAt(0) !== '{' && s.charAt(0) !== '[') { return v; }
+  try { return JSON.parse(s); } catch (e) { return v; }
+}
+
+/* Slug form used for matching products back to integrations. */
+function slug(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+/* =========================================================================
+   2. DISPLAY NAMES
+   Known vendors get their real casing; anything new falls back to a
+   title-cased version of its slug so a fresh product still renders.
+   ========================================================================= */
+var PRODUCT_LABELS = {
+  rmm: 'RMM',
+  sentinelone: 'SentinelOne',
+  sentinel_one: 'SentinelOne',
+  duo: 'Duo',
+  breach_secure_now: 'Breach Secure Now',
+  bsn: 'Breach Secure Now',
+  axcient: 'Axcient',
+  axcient_cloud: 'Axcient Cloud',
+  axcient_recover: 'Axcient Recover',
+  lastpass: 'LastPass',
+  m365: 'Microsoft 365',
+  microsoft_365: 'Microsoft 365',
+  office_365: 'Microsoft 365'
+};
+
+var UNIT_LABELS = {
+  endpoints: 'Endpoints',
+  active_licenses: 'Active Licenses',
+  protected_devices: 'Protected Devices',
+  devices: 'Devices',
+  users: 'Users',
+  seats: 'Seats',
+  mailboxes: 'Mailboxes'
+};
+
+function titleize(s) {
+  return String(s).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim()
+    .replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); });
+}
+
+function productLabel(key, raw) {
+  if (raw && String(raw).trim() !== '' && String(raw) !== key) { return String(raw).trim(); }
+  return PRODUCT_LABELS[key] || titleize(key) || 'Unknown';
+}
+
+function unitLabel(raw) {
+  var k = slug(raw);
+  if (!k) { return ''; }
+  return UNIT_LABELS[k] || titleize(raw);
+}
+
+/* Palette token by product slug. Unknown vendors get a neutral chip
+   rather than throwing, so a new integration needs no code change. */
+function productColor(key) {
+  var n = slug(key);
+  if (n.indexOf('rmm') > -1) { return 'var(--c-rmm)'; }
+  if (n.indexOf('sentinel') > -1) { return 'var(--c-sentinel)'; }
+  if (n.indexOf('duo') > -1) { return 'var(--c-duo)'; }
+  if (n.indexOf('breach') > -1 || n === 'bsn') { return 'var(--c-bsn)'; }
+  if (n.indexOf('axcient') > -1) { return 'var(--c-axcient)'; }
+  if (n.indexOf('365') > -1 || n.indexOf('microsoft') > -1) { return 'var(--c-m365)'; }
+  if (n.indexOf('lastpass') > -1) { return 'var(--c-lastpass)'; }
+  return 'var(--c-other)';
+}
+
+/* =========================================================================
+   3. UNWRAPPING
+   The feed arrives as { json_objects: [...] } today, but has also been a
+   bare list and a single object. All three land in the same place here.
+   ========================================================================= */
+function unwrapPayload(raw) {
+  raw = maybeParse(raw);
+  if (!raw) { return []; }
+  if (Array.isArray(raw)) { return raw; }
+  if (!isObject(raw)) { return []; }
+
+  var listKeys = ['json_objects', 'geo_results', 'results', 'items', 'data', 'orgs', 'organizations'];
+  for (var i = 0; i < listKeys.length; i++) {
+    var candidate = maybeParse(raw[listKeys[i]]);
+    if (Array.isArray(candidate)) { return candidate; }
+  }
+
+  /* A single geo object, passed unwrapped. */
+  if (raw.json || raw.products || raw.integrations || raw.org_id || raw.msp_name) { return [raw]; }
+
+  /* A map keyed by org id. */
+  var values = Object.keys(raw).map(function (k) { return raw[k]; });
+  if (values.length && values.every(isObject)) { return values; }
+  return [];
+}
+
+/* Merge the outer envelope with the inner json payload. Outer wins for
+   identity fields, because org_name is null inside the payload. */
+function flattenEntry(entry) {
+  entry = maybeParse(entry);
+  if (!isObject(entry)) { return null; }
+  var inner = maybeParse(entry.json);
+  if (!isObject(inner)) { inner = {}; }
+
+  return {
+    orgId: firstText([entry.org_id, entry.orgId, entry.id, inner.org_id, inner.orgId]),
+    name: firstText([entry.org_name, entry.msp_name, entry.name, entry.customer_name, entry.geo,
+                     inner.org_name, inner.msp_name, inner.name]) || 'Unnamed MSP',
+    generatedAt: firstText([inner.generated_at, inner.last_synced, inner.synced_at,
+                            entry.generated_at, entry.last_synced, entry.synced_at]),
+    integrations: inner.integrations || entry.integrations || {},
+    products: inner.products || entry.products || {},
+    totals: inner.totals || entry.totals || {}
+  };
+}
+
+/* =========================================================================
+   4. INTEGRATION STATE
+   integrations is a dict of { installed, failed } keyed by vendor slug.
+   Products carry their own slug, which may be more specific than the
+   integration's (axcient_cloud -> axcient), so match by prefix.
+   ========================================================================= */
+function integrationMap(ints) {
+  var map = {};
+  ints = maybeParse(ints);
+  if (!ints) { return map; }
+
+  if (Array.isArray(ints)) {
+    ints.forEach(function (item) {
+      if (!isObject(item)) { return; }
+      var key = slug(pick(item, ['integration', 'key', 'slug', 'name', 'product'], ''));
+      if (!key) { return; }
+      map[key] = {
+        installed: toBool(pick(item, ['installed', 'is_installed', 'isInstalled', 'enabled'], false)),
+        failed: toBool(pick(item, ['failed', 'error', 'has_error'], false))
+      };
+    });
+    return map;
+  }
+
+  if (!isObject(ints)) { return map; }
+  Object.keys(ints).forEach(function (k) {
+    var v = ints[k];
+    if (isObject(v)) {
+      map[slug(k)] = {
+        installed: toBool(pick(v, ['installed', 'is_installed', 'isInstalled', 'enabled'], false)),
+        failed: toBool(pick(v, ['failed', 'error', 'has_error'], false))
+      };
+    } else {
+      map[slug(k)] = { installed: toBool(v), failed: false };
+    }
+  });
+  return map;
+}
+
+function lookupIntegration(map, key) {
+  if (map[key]) { return map[key]; }
+  var best = '';
+  Object.keys(map).forEach(function (k) {
+    var related = key.indexOf(k + '_') === 0 || k.indexOf(key + '_') === 0;
+    if (related && k.length > best.length) { best = k; }
+  });
+  return best ? map[best] : null;
+}
+
+/* Products may be a dict keyed by slug or a list of row objects. */
+function productEntries(products) {
+  products = maybeParse(products);
+  var out = [];
+  if (!products) { return out; }
+
+  if (Array.isArray(products)) {
+    products.forEach(function (p) {
+      if (!isObject(p)) { return; }
+      var key = slug(pick(p, ['product', 'key', 'slug', 'name', 'product_name'], ''));
+      if (!key) { return; }
+      out.push({ key: key, raw: p, label: pick(p, ['product_name', 'label', 'display_name'], null) });
+    });
+    return out;
+  }
+
+  if (!isObject(products)) { return out; }
+  Object.keys(products).forEach(function (k) {
+    var v = products[k];
+    if (!isObject(v)) { return; }
+    out.push({ key: slug(k), raw: v, label: pick(v, ['product_name', 'label', 'display_name'], null) });
+  });
+  return out;
+}
+
+/* =========================================================================
+   5. NORMALIZATION — one geo in, one render-ready object out
+   ========================================================================= */
+function normalizeGeo(entry) {
+  var geo = flattenEntry(entry);
+  if (!geo) { return null; }
+
+  var intMap = integrationMap(geo.integrations);
+
+  var products = productEntries(geo.products).map(function (item) {
+    var p = item.raw;
+    var integ = lookupIntegration(intMap, item.key);
+    var statusRaw = String(pick(p, ['status'], '') || '');
+    var skipped = /skip/i.test(statusRaw);
+
+    var failed = toBool(pick(p, ['failed'], false))
+      || /fail|error/i.test(statusRaw)
+      || (integ ? integ.failed : false);
+
+    /* An explicit per-product flag wins; otherwise the integration decides.
+       A skipped product produced no data this run either way. */
+    var installed;
+    if (pick(p, ['installed', 'is_installed', 'isInstalled'], null) !== null) {
+      installed = toBool(pick(p, ['installed', 'is_installed', 'isInstalled'], false));
+    } else if (integ) {
+      installed = integ.installed;
+    } else {
+      installed = !skipped && statusRaw !== '';
+    }
+    var tracked = installed && !skipped;
+
+    var mapped = toNumber(pick(p, ['mapped_companies', 'mapped', 'companies_mapped'], null));
+    var unCos = toNumber(pick(p, ['unmapped_companies', 'unmapped', 'companies_unmapped'], null));
+    var seats = toNumber(pick(p, ['unmapped_seats', 'seats', 'unmapped_units'], null));
+    var notBilling = toNumber(pick(p, ['mapped_not_billing', 'mapped_not_billed', 'not_billing'], null));
+
+    var denom = (mapped || 0) + (unCos || 0);
+    var badge = failed ? 'Failed'
+      : tracked ? (statusRaw ? statusRaw.toUpperCase() : 'OK')
+      : (installed && skipped ? 'Skipped' : 'Not Installed');
+
+    return {
+      key: item.key,
+      name: productLabel(item.key, item.label),
+      installed: tracked,
+      failed: failed,
+      status: badge,
+      unit: unitLabel(pick(p, ['unit', 'unit_type', 'uom'], '')),
+      mapped: tracked ? (mapped || 0) : null,
+      notBilling: tracked ? notBilling : null,
+      unmappedCos: tracked ? (unCos || 0) : null,
+      unmappedSeats: tracked ? (seats || 0) : null,
+      coverage: tracked && denom > 0 ? Math.round(((mapped || 0) / denom) * 100) : null,
+      hasGap: tracked && ((unCos || 0) > 0 || (seats || 0) > 0)
+    };
+  });
+
+  /* Actionable first, then clean, then blind spots — biggest exposure on top. */
+  products.sort(function (a, b) {
+    if (a.installed !== b.installed) { return a.installed ? -1 : 1; }
+    if (a.installed) {
+      if (a.hasGap !== b.hasGap) { return a.hasGap ? -1 : 1; }
+      if ((b.unmappedSeats || 0) !== (a.unmappedSeats || 0)) { return (b.unmappedSeats || 0) - (a.unmappedSeats || 0); }
+      return (b.unmappedCos || 0) - (a.unmappedCos || 0);
+    }
+    return a.name.localeCompare(b.name);
+  });
+
+  var installedList = products.filter(function (p) { return p.installed; });
+  var sum = function (arr, key) { return arr.reduce(function (t, p) { return t + (p[key] || 0); }, 0); };
+  var mappedTotal = sum(installedList, 'mapped');
+  var unCosTotal = sum(installedList, 'unmappedCos');
+  var notBillingVals = installedList.filter(function (p) { return p.notBilling !== null; });
+
+  return {
+    name: geo.name,
+    orgId: geo.orgId,
+    lastSynced: geo.generatedAt,
+    products: products,
+    productCount: products.length,
+    installedCount: installedList.length,
+    blindSpots: products.length - installedList.length,
+    failedCount: products.filter(function (p) { return p.failed; }).length,
+    mapped: mappedTotal,
+    unmappedCos: unCosTotal,
+    unmappedSeats: sum(installedList, 'unmappedSeats'),
+    notBilling: notBillingVals.length ? sum(notBillingVals, 'notBilling') : null,
+    coverage: (mappedTotal + unCosTotal) > 0 ? Math.round((mappedTotal / (mappedTotal + unCosTotal)) * 100) : null
+  };
+}
+
+/* =========================================================================
+   6. RENDERING
+   Nothing below is hardcoded to a geo count. Every card, total, ranking
+   and filter count is derived from the normalized data at load.
+   ========================================================================= */
+var GEOS = [];
+
+function num(n) { return n === null || n === undefined ? '&mdash;' : Number(n).toLocaleString(); }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function formatSynced(iso) {
+  if (!iso) { return ''; }
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) { return iso; }
+  return d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
+}
+
+function latestSync() {
+  if (window.REPORT_GENERATED) { return window.REPORT_GENERATED; }
+  var best = '';
+  GEOS.forEach(function (g) {
+    if (g.lastSynced && (!best || new Date(g.lastSynced) > new Date(best))) { best = g.lastSynced; }
+  });
+  return best;
+}
+
+function statCard(label, value, cls, sub) {
+  return '<div class="stat-item">'
+    + '<div class="stat-name">' + esc(label) + '</div>'
+    + '<div class="stat-num ' + (cls || '') + '">' + value + '</div>'
+    + '<div class="stat-sub">' + sub + '</div>'
+    + '</div>';
+}
+
+function renderPortfolio() {
+  var total = function (key) { return GEOS.reduce(function (t, g) { return t + (g[key] || 0); }, 0); };
+  var seats = total('unmappedSeats'), cos = total('unmappedCos'), mapped = total('mapped');
+  var products = total('productCount'), installed = total('installedCount');
+  var blind = total('blindSpots'), failed = total('failedCount');
+  var denom = mapped + cos;
+  var coverage = denom > 0 ? Math.round((mapped / denom) * 100) : null;
+  var hasNotBilling = GEOS.some(function (g) { return g.notBilling !== null; });
+  var notBilling = hasNotBilling ? GEOS.reduce(function (t, g) { return t + (g.notBilling || 0); }, 0) : null;
+  var stamp = latestSync();
+
+  document.getElementById('report-meta').innerHTML =
+    (stamp ? 'Generated ' + esc(formatSynced(stamp)) + ' &nbsp;&middot;&nbsp; ' : '')
+    + GEOS.length + ' MSP' + (GEOS.length === 1 ? '' : 's') + ' reporting &nbsp;&middot;&nbsp; '
+    + installed + ' of ' + products + ' products tracked &nbsp;&middot;&nbsp; ' + blind + ' untracked';
+
+  document.getElementById('portfolio-stats').innerHTML =
+      statCard('Unmapped Seats', num(seats), 'gap', 'outside automation &mdash; billing unverified')
+    + statCard('Unmapped Companies', num(cos), 'gap', 'across ' + installed + ' tracked product' + (installed === 1 ? '' : 's'))
+    + statCard('Automation Coverage', coverage === null ? '&mdash;' : coverage + '<span class="stat-unit">%</span>', 'gap',
+               coverage === null ? 'no mapped or unmapped companies reported' : num(mapped) + ' of ' + num(denom) + ' companies mapped')
+    + statCard('Mapped, Not Billing', notBilling === null ? '&mdash;' : num(notBilling), notBilling === null ? 'muted' : 'gap',
+               notBilling === null ? 'not reported &mdash; needs addition billing status' : 'confirmed billing gaps')
+    + statCard('Integrations Failed', num(failed), failed === 0 ? 'ok' : 'gap',
+               failed === 0 ? 'no sync errors this run' : 'sync errors need attention')
+    + statCard('Blind Spots', num(blind), '', 'no integration &mdash; gap unknown, may be zero');
+}
+
+function productRow(p) {
+  var dash = '<td class="num dash">&mdash;</td>';
+  var badge = p.failed ? '<span class="badge badge-failed">Failed</span>'
+            : p.installed ? '<span class="badge badge-ok">' + esc(p.status) + '</span>'
+            : '<span class="badge badge-ni">' + esc(p.status) + '</span>';
+
+  var cells;
+  if (!p.installed) {
+    cells = dash + dash + dash + dash + dash;
+  } else {
+    cells = '<td class="num ' + (p.mapped ? '' : 'zero-num') + '">' + num(p.mapped) + '</td>'
+      + (p.notBilling === null
+          ? '<td class="num dash" title="Not reported — requires addition billing status from the PSA">&mdash;</td>'
+          : '<td class="num ' + (p.notBilling > 0 ? 'gap-num' : 'zero-num') + '">' + num(p.notBilling) + '</td>')
+      + '<td class="num ' + (p.unmappedCos > 0 ? 'gap-num' : 'zero-num') + '">' + num(p.unmappedCos) + '</td>'
+      + '<td class="num ' + (p.unmappedSeats > 0 ? 'gap-num' : 'zero-num') + '">' + num(p.unmappedSeats) + '</td>'
+      + '<td class="num">' + (p.coverage === null ? '<span class="dash">&mdash;</span>'
+          : '<span class="cov-num' + (p.coverage < 80 ? ' low' : '') + '">' + p.coverage + '%</span>') + '</td>';
+  }
+
+  return '<tr data-installed="' + p.installed + '" data-gaps="' + p.hasGap + '">'
+    + '<td><span class="prod"><span class="prod-dot" style="--chip: ' + productColor(p.key) + '"></span>' + esc(p.name) + '</span></td>'
+    + '<td>' + badge + '</td>'
+    + '<td class="unit">' + esc(p.unit) + '</td>'
+    + cells
+    + '</tr>';
+}
+
+function geoCard(g, rank, portfolioSeats) {
+  var share = portfolioSeats > 0 ? Math.round((g.unmappedSeats / portfolioSeats) * 100) : 0;
+  var denom = g.mapped + g.unmappedCos;
+
+  var stats =
+      statCard('Unmapped Seats', num(g.unmappedSeats), 'gap', share + '% of portfolio unmapped seats')
+    + statCard('Unmapped Companies', num(g.unmappedCos), 'gap', 'across ' + g.installedCount + ' installed integration' + (g.installedCount === 1 ? '' : 's'))
+    + statCard('Automation Coverage', g.coverage === null ? '&mdash;' : g.coverage + '<span class="stat-unit">%</span>', 'gap',
+               g.coverage === null ? 'nothing reported' : num(g.mapped) + ' of ' + num(denom) + ' mapped')
+    + statCard('Products Tracked', g.installedCount + '<span class="stat-unit">/' + g.productCount + '</span>', '',
+               g.blindSpots + ' untracked &middot; ' + g.failedCount + ' failed');
+
+  var rows = g.products.length
+    ? g.products.map(productRow).join('')
+    : '<tr class="empty-row"><td colspan="8">No products reported for this MSP.</td></tr>';
+
+  return '<div class="msp-card">'
+    + '<div class="msp-head">'
+      + '<div class="msp-title"><span class="msp-rank">' + rank + '</span><span class="msp-name">' + esc(g.name) + '</span></div>'
+      + '<div class="msp-meta">'
+        + (g.lastSynced ? '<div>Last synced ' + esc(formatSynced(g.lastSynced)) + '</div>' : '')
+        + (g.orgId ? '<div class="org-id">' + esc(g.orgId) + '</div>' : '')
+      + '</div>'
+    + '</div>'
+    + '<div class="msp-stats stat-grid">' + stats + '</div>'
+    + '<div class="int-table-wrap"><table class="int-table"><thead><tr>'
+      + '<th>Product</th><th>Status</th><th>Unit</th>'
+      + '<th class="num">Mapped</th><th class="num">Mapped, Not Billing</th>'
+      + '<th class="num">Unmapped Cos.</th><th class="num">Unmapped Seats</th><th class="num">Coverage</th>'
+    + '</tr></thead><tbody>'
+      + rows
+      + '<tr class="empty-row hidden"><td colspan="8"></td></tr>'
+    + '</tbody></table>'
+    + '<div class="table-note">Mapped, not billing is reported only where the feed supplies the addition&rsquo;s billable flag and quantity. Where it shows a dash, a mapped company is assumed to be billing.</div>'
+    + '</div></div>';
+}
+
+function renderAll() {
+  var entries = unwrapPayload(window.REPORT_DATA);
+
+  GEOS = entries.map(normalizeGeo).filter(function (g) { return g !== null; });
+
+  /* Largest exposure first — ranking is derived, never hardcoded. */
+  GEOS.sort(function (a, b) {
+    if (b.unmappedSeats !== a.unmappedSeats) { return b.unmappedSeats - a.unmappedSeats; }
+    if (b.unmappedCos !== a.unmappedCos) { return b.unmappedCos - a.unmappedCos; }
+    return a.name.localeCompare(b.name);
+  });
+
+  var host = document.getElementById('msp-cards');
+  if (!GEOS.length) {
+    document.getElementById('report-meta').textContent = 'No MSP data in this run.';
+    document.getElementById('portfolio-stats').innerHTML =
+      '<div class="page-empty" style="grid-column:1/-1;"><strong>Nothing to report</strong>The workflow returned no geo results. If this is unexpected, check the upstream query before assuming coverage is complete.</div>';
+    host.innerHTML = '';
+    applyScope();
+    return;
+  }
+
+  renderPortfolio();
+  var portfolioSeats = GEOS.reduce(function (t, g) { return t + g.unmappedSeats; }, 0);
+  host.innerHTML = GEOS.map(function (g, i) { return geoCard(g, i + 1, portfolioSeats); }).join('');
+  applyScope();
+}
+
+/* =========================================================================
+   7. FILTERING
+   ========================================================================= */
+function scopeBtns() { return document.querySelectorAll('#scope .seg-btn'); }
+
+function currentScope() {
+  var checked = document.querySelector('#scope .seg-btn[aria-checked="true"]');
+  return checked ? checked.getAttribute('data-scope') : 'all';
+}
+
+function applyScope() {
+  var scope = currentScope();
+  var counts = { all: 0, installed: 0, gaps: 0, notinstalled: 0 };
+  var totalShown = 0;
+
+  Array.prototype.forEach.call(document.querySelectorAll('.int-table tbody'), function (body) {
+    var shown = 0;
+    Array.prototype.forEach.call(body.querySelectorAll('tr[data-installed]'), function (row) {
+      var installed = row.getAttribute('data-installed') === 'true';
+      var gaps = row.getAttribute('data-gaps') === 'true';
+
+      counts.all++;
+      if (installed) { counts.installed++; } else { counts.notinstalled++; }
+      if (gaps) { counts.gaps++; }
+
+      var show = scope === 'all'
+        || (scope === 'installed' && installed)
+        || (scope === 'gaps' && gaps)
+        || (scope === 'notinstalled' && !installed);
+      row.classList.toggle('hidden', !show);
+      if (show) { shown++; totalShown++; }
+    });
+
+    var placeholder = body.querySelector('tr.empty-row:last-child');
+    if (placeholder && body.querySelector('tr[data-installed]')) {
+      placeholder.classList.toggle('hidden', shown > 0);
+      placeholder.querySelector('td').textContent =
+          scope === 'gaps'         ? 'No reconciliation gaps for this MSP.'
+        : scope === 'notinstalled' ? 'Every product is installed for this MSP — no blind spots.'
+        : scope === 'installed'    ? 'No integrations installed for this MSP.'
+        :                            'No products reported for this MSP.';
+    }
+  });
+
+  Array.prototype.forEach.call(scopeBtns(), function (btn) {
+    btn.querySelector('.seg-count').textContent = counts[btn.getAttribute('data-scope')];
+  });
+
+  document.getElementById('export-count').textContent = totalShown;
+  document.getElementById('export-all-btn').textContent = 'All ' + counts.all + ' rows';
+
+  document.getElementById('scope-note').textContent =
+      scope === 'gaps'         ? 'Showing products with companies outside automated reconciliation. These may still be billed manually — verify before treating as leakage.'
+    : scope === 'notinstalled' ? 'No integration means no data. The gap may be zero if the MSP does not sell the product — installing is only worth it where they do.'
+    : scope === 'installed'    ? 'Hiding products the MSP has not installed.'
+    :                            'Showing every product, tracked or not.';
+}
+
+function setScope(btn) {
+  Array.prototype.forEach.call(scopeBtns(), function (b) {
+    b.setAttribute('aria-checked', b === btn ? 'true' : 'false');
+  });
+  applyScope();
+}
+
+function scopeKeys(evt) {
+  var keys = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 };
+  var step = keys[evt.key];
+  if (!step) { return; }
+  evt.preventDefault();
+  var btns = Array.prototype.slice.call(scopeBtns());
+  var current = btns.indexOf(document.querySelector('#scope .seg-btn[aria-checked="true"]'));
+  var next = btns[(current + step + btns.length) % btns.length];
+  setScope(next);
+  next.focus();
+}
+
+/* =========================================================================
+   8. CSV EXPORT — built from normalized data, filtered to match the view
+   ========================================================================= */
+function csvCell(value) {
+  var v = value === null || value === undefined ? '' : String(value);
+  return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+}
+
+function buildCsv(includeHidden) {
+  var scope = currentScope();
+  var rows = [[
+    'MSP', 'Org ID', 'Last Synced', 'Product', 'Status', 'Installed', 'Unit',
+    'Mapped', 'Mapped Not Billing', 'Unmapped Companies', 'Unmapped Seats',
+    'Automation Coverage %', 'Has Unmapped'
+  ]];
+
+  GEOS.forEach(function (g) {
+    g.products.forEach(function (p) {
+      var inView = includeHidden || scope === 'all'
+        || (scope === 'installed' && p.installed)
+        || (scope === 'gaps' && p.hasGap)
+        || (scope === 'notinstalled' && !p.installed);
+      if (!inView) { return; }
+
+      rows.push([
+        g.name, g.orgId, g.lastSynced, p.name, p.status, p.installed ? 'Yes' : 'No', p.unit,
+        p.mapped, p.notBilling, p.unmappedCos, p.unmappedSeats, p.coverage,
+        p.hasGap ? 'Yes' : 'No'
+      ]);
+    });
+  });
+
+  return rows.map(function (r) { return r.map(csvCell).join(','); }).join('\r\n');
+}
+
+function downloadCsv(includeHidden) {
+  var csv = '﻿' + buildCsv(includeHidden);   /* BOM so Excel reads UTF-8 */
+  var stamp = new Date().toISOString().slice(0, 10);
+  var suffix = includeHidden || currentScope() === 'all' ? 'all' : currentScope();
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'agreement-automation-' + stamp + '-' + suffix + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+}
+
+function togglePanel(btn) {
+  var body = document.getElementById(btn.getAttribute('aria-controls'));
+  var isCollapsed = btn.classList.toggle('collapsed');
+  body.classList.toggle('hidden', isCollapsed);
+  btn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+}
+
+renderAll();
+</script>
+</body>
+</html>
