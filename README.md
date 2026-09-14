@@ -54,6 +54,16 @@ to any single platform.
   - [Privilege-gated execution](security-and-access-control/ai-assisted-admin-actions/concepts/privilege-gated-execution.md)
   - [Ambiguity is a stop condition](security-and-access-control/ai-assisted-admin-actions/concepts/ambiguity-is-a-stop-condition.md)
 
+## Security operations
+
+- [Threat Detection Incident Tracking](security-operations/threat-detection-incident-tracking) —
+  turns a security detection into a tracked incident automatically: filed
+  against the right business whenever possible, linked back to the
+  source detection, and kept updated until it resolves.
+  - [Layered ownership resolution](security-operations/threat-detection-incident-tracking/concepts/layered-ownership-resolution.md)
+  - [Diff-based incremental polling](security-operations/threat-detection-incident-tracking/concepts/diff-based-incremental-polling.md)
+  - [Bidirectional system linking](security-operations/threat-detection-incident-tracking/concepts/bidirectional-system-linking.md)
+
 ## Service delivery operations
 
 - [NOC Ticket Routing](service-delivery-operations/noc-ticket-routing) — a
