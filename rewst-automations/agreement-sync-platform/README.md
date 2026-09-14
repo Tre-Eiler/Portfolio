@@ -1,51 +1,37 @@
 # Agreement Sync Platform
 
-A cross-vendor billing-reconciliation system built in Rewst for an MSP
-portfolio. It answers one question per managed company, per vendor product:
-*"Is this company on a billed PSA agreement addition for something it's
-actually using?"*
+A system for keeping vendor billing in sync with what's actually deployed,
+across a portfolio of managed businesses.
 
-## Why
+## The problem
 
-Each MSP in the portfolio has some subset of vendor integrations installed
-(RMM, SentinelOne, Duo, Breach Secure Now, Axcient Cloud, Axcient Recover).
-Vendor platforms know who's actually using the product; the PSA knows who's
-being billed for it. Those two lists drift apart over time — a company gets
-onboarded to a tool but never added to the billing agreement, or an
-agreement goes stale after an offboarding. This system surfaces that drift
-without claiming to resolve it: unmapped doesn't necessarily mean unbilled,
-since some companies are still invoiced manually.
+Vendor platforms know who's actually using a product. The billing system
+knows who's being invoiced for it. Those two views drift apart over time —
+a business gets onboarded to a tool but never added to the billing
+agreement, an integration only gets partially rolled out, or an agreement
+goes stale after an offboarding. Left unchecked, that drift either costs
+revenue (used but not billed) or costs trust (billed but not used).
 
-## Components
+## What it does
 
-- **Per-vendor sync/audit workflows** (one per integration, per MSP) —
-  compare vendor-side company/seat counts against PSA agreement mappings and
-  write the result to a per-MSP org variable. Three are documented so far:
-  [SentinelOne](./vendor-syncs/sentinelone-sync.md),
-  [Duo](./vendor-syncs/duo-sync.md), and
-  [M365 users](./vendor-syncs/m365-user-sync.md) — each also handles its own
-  setup wizard and PSA ticket/time logging, not just the sync itself.
-- **Aggregation + render + publish workflow** — collects every MSP's audit
-  blob, renders one HTML report, and publishes it both as a live App
-  Builder page and a weekly email digest. See
-  [workflow-overview.md](./workflow-overview.md) for the node-by-node
-  breakdown.
-- **App Builder landing page** — the report itself: a portfolio summary,
-  per-MSP cards with an installed/unmapped/not-installed breakdown, and a
-  CSV export that mirrors whatever filter is on screen. See
-  [agreement-automation-overview.sample.html](./agreement-automation-overview.sample.html)
-  for a sanitized snapshot (client names and org IDs replaced with
-  `MSP-01`..`MSP-17` placeholders; the underlying report logic and layout
-  are unmodified from production).
-- **Setup forms** — per-MSP configuration for which vendor integrations are
-  in scope and how their companies map to PSA agreements. Not yet
-  documented here; a future addition.
+- **Reconciliation reporting** — aggregates usage/mapping data across
+  every vendor integration and every managed business into one recurring
+  report, so drift is visible instead of hidden in each vendor's own
+  console. See
+  [concepts/aggregation-and-reporting.md](./concepts/aggregation-and-reporting.md).
+- **A repeatable per-vendor sync pattern** — the same two-mode approach
+  (an interactive setup path and a scheduled reconciliation path) is
+  reused across every vendor integration rather than building bespoke
+  logic per vendor. See
+  [concepts/per-vendor-sync-pattern.md](./concepts/per-vendor-sync-pattern.md).
+- **Bulk, non-billing onboarding** — lets an operator configure several
+  vendor integrations for a business at once without turning billing on
+  immediately, so technical setup and the billing decision can happen on
+  separate timelines. See
+  [concepts/bulk-onboarding.md](./concepts/bulk-onboarding.md).
 
-## Notes on the sample file
+## Sample artifact
 
-`agreement-automation-overview.sample.html` is a real rendered output of the
-platform with client-identifying data scrubbed: MSP names and org IDs are
-synthetic, and the two links back to the live Courser tenant/hosted logo
-were replaced with placeholders. Everything else — the stats, the
-per-product gap numbers, the filtering/export behavior — is unchanged and
-fully functional if you open the file in a browser.
+[agreement-automation-overview.sample.html](./agreement-automation-overview.sample.html)
+is a sanitized snapshot of the reconciliation report's UI — real report
+logic and layout, synthetic business names and identifiers.

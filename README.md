@@ -1,13 +1,20 @@
 # Portfolio
 
-Selected automation, tooling, and integration work.
+Selected automation and integration work — described conceptually.
+
+**About these write-ups:** this repo intentionally describes systems at
+the level of *what problem they solve and how they're architected*, not as
+literal build documentation. Internal identifiers, specific field/variable
+names, exact workflow steps, and vendor record numbers are omitted or
+generalized on purpose. The goal is to show the thinking and design
+patterns behind the work, not to reproduce operating procedures for the
+underlying systems.
 
 ## Rewst automations
 
-- [Agreement Sync Platform](rewst-automations/agreement-sync-platform) —
-  cross-vendor billing-reconciliation reporting across an MSP portfolio:
-  App Builder page, aggregation workflow, per-vendor sync/audit workflows,
-  weekly email digest.
-  - [SentinelOne sync](rewst-automations/agreement-sync-platform/vendor-syncs/sentinelone-sync.md)
-  - [Duo sync](rewst-automations/agreement-sync-platform/vendor-syncs/duo-sync.md)
-  - [M365 user sync](rewst-automations/agreement-sync-platform/vendor-syncs/m365-user-sync.md)
+- [Agreement Sync Platform](rewst-automations/agreement-sync-platform) — a
+  system for keeping vendor billing in sync with what's actually deployed,
+  across a portfolio of managed businesses.
+  - [Reconciliation reporting](rewst-automations/agreement-sync-platform/concepts/aggregation-and-reporting.md)
+  - [Per-vendor sync pattern](rewst-automations/agreement-sync-platform/concepts/per-vendor-sync-pattern.md)
+  - [Bulk, non-billing onboarding](rewst-automations/agreement-sync-platform/concepts/bulk-onboarding.md)
