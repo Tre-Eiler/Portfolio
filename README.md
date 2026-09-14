@@ -43,3 +43,11 @@ underlying systems.
   - [Dual-fallback identity resolution](rewst-automations/deployment-time-logging/concepts/dual-fallback-identity-resolution.md)
   - [Poll until the session completes](rewst-automations/deployment-time-logging/concepts/poll-until-session-completes.md)
   - [Configurable time disposition](rewst-automations/deployment-time-logging/concepts/configurable-time-disposition.md)
+- [Usage-Based Billing Sync](rewst-automations/usage-based-billing-sync) —
+  a recurring automation that turns a cloud provider's consumption data
+  into a single accurate billing charge each period, distinct from the
+  seat/license reconciliation in Agreement Sync Platform.
+  - [Period-based idempotent sync](rewst-automations/usage-based-billing-sync/concepts/period-based-idempotent-sync.md)
+  - [Exclusion list filtering](rewst-automations/usage-based-billing-sync/concepts/exclusion-list-filtering.md)
+  - [Configurable cost-to-price translation](rewst-automations/usage-based-billing-sync/concepts/cost-to-price-translation.md)
+  - [Traceable single-line billing](rewst-automations/usage-based-billing-sync/concepts/traceable-single-line-billing.md)
