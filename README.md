@@ -18,3 +18,10 @@ underlying systems.
   - [Reconciliation reporting](rewst-automations/agreement-sync-platform/concepts/aggregation-and-reporting.md)
   - [Per-vendor sync pattern](rewst-automations/agreement-sync-platform/concepts/per-vendor-sync-pattern.md)
   - [Bulk, non-billing onboarding](rewst-automations/agreement-sync-platform/concepts/bulk-onboarding.md)
+- [NOC Ticket Routing](rewst-automations/noc-ticket-routing) — a recurring
+  automation that triages helpdesk tickets across a portfolio of managed
+  businesses by priority and technician activity, instead of a human
+  scanning every ticket by hand.
+  - [Config-driven, multi-org setup](rewst-automations/noc-ticket-routing/concepts/config-driven-multi-org-setup.md)
+  - [Keyword-based priority routing](rewst-automations/noc-ticket-routing/concepts/keyword-priority-routing.md)
+  - [Human-activity detection](rewst-automations/noc-ticket-routing/concepts/human-activity-detection.md)
