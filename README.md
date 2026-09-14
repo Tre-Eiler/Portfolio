@@ -14,6 +14,11 @@ Organized below by what each automation does, not by the tool it's built
 in — several of these happen to be built in Rewst, but that's an
 implementation detail, not the organizing principle.
 
+These concepts live across the broader MSP tool stack — ConnectWise RMM,
+Rewst, ConnectWise PSA, IT Glue, ImmyBot, SentinelOne, and many others
+common in managed services — orchestrated together rather than confined
+to any single platform.
+
 ## Billing & reconciliation
 
 - [Agreement Sync Platform](billing-and-reconciliation/agreement-sync-platform) —
