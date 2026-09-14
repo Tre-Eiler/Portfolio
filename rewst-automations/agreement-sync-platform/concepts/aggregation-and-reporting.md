@@ -8,6 +8,21 @@ periodically collects all of those independent reports, rolls them into
 one view, and publishes it both as a live report and as a recurring
 digest.
 
+```mermaid
+flowchart LR
+    subgraph Per-business, per-vendor
+        V1[Vendor A status]
+        V2[Vendor B status]
+        V3[Vendor C status]
+    end
+    V1 --> AG[Collect & normalize]
+    V2 --> AG
+    V3 --> AG
+    AG --> R[Render one report]
+    R --> P1[Live report page]
+    R --> P2[Recurring digest]
+```
+
 ## Why collect independently and aggregate separately
 
 Each vendor integration has different data, different failure modes, and a

@@ -12,6 +12,14 @@ agreement, an integration only gets partially rolled out, or an agreement
 goes stale after an offboarding. Left unchecked, that drift either costs
 revenue (used but not billed) or costs trust (billed but not used).
 
+## How the pieces fit together
+
+```mermaid
+flowchart LR
+    B[Bulk, non-billing onboarding] -->|seeds mappings for| P[Per-vendor sync pattern]
+    P -->|each vendor reports status to| R[Reconciliation reporting]
+```
+
 ## What it does
 
 - **Reconciliation reporting** — aggregates usage/mapping data across

@@ -8,6 +8,20 @@ recurring basis. Both paths converge on one shared routine, so there's
 exactly one implementation of "how to reconcile this vendor," whether it's
 triggered once or on a schedule.
 
+```mermaid
+flowchart TD
+    S[Technician runs setup for one business] --> V[Verify agreement & vendor account]
+    V --> P[Resolve product/tier to bill]
+    P --> M[Save mapping]
+    M --> RC[Shared reconciliation routine]
+
+    T[Scheduled trigger] --> L[Load saved mappings, every business]
+    L --> RC
+
+    RC --> A[Apply billing product]
+    A --> Log[Log work performed]
+```
+
 ## The shared shape
 
 1. **Setup** — given the billing agreement and the vendor account to
@@ -36,7 +50,15 @@ triggered once or on a schedule.
   a routing layer: the same entry point serves first-time setup, ad hoc
   changes, a read-only reporting view, and the scheduled portfolio-wide
   run, based on which inputs are present when it's invoked — one
-  implementation instead of four.
+  implementation instead of four:
+
+```mermaid
+flowchart LR
+    Entry[Single entry point] --> Setup[First-time setup]
+    Entry --> Adhoc[Ad hoc change]
+    Entry --> Report[Read-only reporting view]
+    Entry --> Cron[Scheduled portfolio-wide run]
+```
 
 ## Design principles
 

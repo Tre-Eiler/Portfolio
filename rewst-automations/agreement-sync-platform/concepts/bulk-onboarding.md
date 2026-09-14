@@ -6,6 +6,21 @@ integration's sync pattern needs — without turning billing on yet. The
 integrations start syncing on their normal schedule immediately; whether
 and when to actually bill is a separate decision made later.
 
+```mermaid
+flowchart TD
+    Op[Operator selects vendors for one business] --> P1[Vendor A: zero-qty, non-billable placeholder]
+    Op --> P2[Vendor B: zero-qty, non-billable placeholder]
+    Op --> P3[Vendor C: zero-qty, non-billable placeholder]
+
+    P1 --> S1[Vendor A sync pattern]
+    P2 --> S2[Vendor B sync pattern]
+    P3 --> S3[Vendor C sync pattern]
+
+    S1 --> Bill[Separate, deliberate decision: turn on billing]
+    S2 --> Bill
+    S3 --> Bill
+```
+
 ## Why separate "configured" from "billing"
 
 Onboarding a business's integrations and deciding to start charging for
