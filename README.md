@@ -36,3 +36,10 @@ underlying systems.
   - [Multi-channel fan-out](rewst-automations/real-time-incident-alerting/concepts/multi-channel-fan-out.md)
   - [Channel-specific quiet hours](rewst-automations/real-time-incident-alerting/concepts/channel-specific-quiet-hours.md)
   - [Self-resolving alert loop](rewst-automations/real-time-incident-alerting/concepts/self-resolving-alert-loop.md)
+- [Deployment Time Logging](rewst-automations/deployment-time-logging) — an
+  endpoint-triggered automation that finds out how long an automated
+  device deployment actually took and logs it back on the ticket that
+  requested it.
+  - [Dual-fallback identity resolution](rewst-automations/deployment-time-logging/concepts/dual-fallback-identity-resolution.md)
+  - [Poll until the session completes](rewst-automations/deployment-time-logging/concepts/poll-until-session-completes.md)
+  - [Configurable time disposition](rewst-automations/deployment-time-logging/concepts/configurable-time-disposition.md)
