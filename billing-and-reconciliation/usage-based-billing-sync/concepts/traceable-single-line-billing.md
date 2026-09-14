@@ -33,5 +33,5 @@ answer a five-second lookup instead of a re-run of the automation.
   a system whose data may have since changed.
 - **A tracking ticket is the anchor for that detail** — the same
   "one ticket per run, with the evidence attached" instinct as
-  [Workforce-to-Directory Identity Sync](../../workforce-directory-sync/concepts/ticketed-batch-run.md),
+  [Workforce-to-Directory Identity Sync](../../../identity-management/workforce-directory-sync/concepts/ticketed-batch-run.md),
   applied here to a financial total instead of a batch of user updates.

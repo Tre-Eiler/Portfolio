@@ -38,5 +38,5 @@ proportional to headcount.
   stuck or failed batch; per-item detail belongs in execution logs, not
   ticket volume.
 - **The same "track the work, don't run it silently" instinct as the
-  [per-vendor sync pattern](../../agreement-sync-platform/concepts/per-vendor-sync-pattern.md)**,
+  [per-vendor sync pattern](../../../billing-and-reconciliation/agreement-sync-platform/concepts/per-vendor-sync-pattern.md)**,
   applied here at the batch level instead of the per-business level.

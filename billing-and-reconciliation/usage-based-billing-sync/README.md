@@ -37,7 +37,7 @@ period's charge twice.
 - **Bounded retry on transient failures** — every external lookup retries
   on increasing backoff up to a small cap before falling back to a
   failure path, the same principle documented in
-  [NOC Ticket Routing](../noc-ticket-routing/concepts/human-activity-detection.md).
+  [NOC Ticket Routing](../../service-delivery-operations/noc-ticket-routing/concepts/human-activity-detection.md).
 
 ## How it flows
 
